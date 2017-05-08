@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Whack A Mole!</title>
+  <link href='https://fonts.googleapis.com/css?family=Amatic+SC:400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>Whack-a-mole! <span class="score">0</span></h1>
+  
+  <button class="startGame" onClick="startGame()">Start Game!</button>
+    
+<!--  <button id="startB" class="startGame myScore" onClick="scoreGame()">Show Score!</button>-->
+<div id="scoring">
+<span id="hS" class="scoreC"></span>
+<span id="lS" class="scoreC"></span>
+ </div>     
+
+  <div class="game">
+    <div class="hole hole1">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole2">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole3">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole4">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole5">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole6">
+      <div class="mole"></div>
+    </div>
+  </div>
+
+<script>
+  var Level = 0;
+  const holes = document.querySelectorAll('.hole');
+  const scoreBoard = document.querySelector('.score');
+  const moles = document.querySelectorAll('.mole');
+  let lastHole;
+  let timeUp = false;
+   
+  var score = 0;
+  var highScore;
+  var firstStart = 0;
+  var firstScore;
+    
+    
+  function randomTime(min, max) {
+      return Math.round(Math.random() * (max - min) + min);
+  }
+    
+  function randomHole(holes) {
+      const idx = Math.floor(Math.random() * holes.length);
+      const hole = holes[idx];
+      if (hole === lastHole) {
+          console.log('ah noooooooo');
+          return randomHole(holes);
+      }
+      
+      lastHole = hole;
+      return hole;
+  }
+    
+  function peep(){
+      const time = randomTime (200, 1000);
+      const hole = randomHole(holes);
+      hole.classList.add('up');
+      setTimeout (() => {
+        hole.classList.remove('up');
+        if(!timeUp) peep();
+      }, time);
+  }
+    
+  function startGame(){
+      scoreBoard.textContent = 0;
+      timeUp = false;
+      score = 0;
+      peep();
+      setTimeout(() => timeUp = true, 10000);
+      
+      document.getElementById("hS").innerHTML = "";
+      document.getElementById("lS").innerHTML= "";
+
+  }
+    
+  function bonk(e){
+      if (!e.isTrusted) return; //cheater!
+      score++;
+      this.classList.remove ('up');
+      scoreBoard.textContent = score;
+      
+      scoreGame();
+  }
+    
+    
+  moles.forEach(mole => mole.addEventListener('click', bonk));
+
+    
+
+    function scoreGame(){
+        
+        
+        if ( score === 0) {
+            
+            document.getElementById("hS").innerHTML = "0";
+            document.getElementById("lS").innerHTML= "Must Play First!";
+            
+        } else {
+        
+        
+        if( firstStart === 0) {
+            
+            localStorage.setItem("highScore", score);
+            
+            //console.log(score);
+            //console.log(firstScore);
+            
+            firstStart = 1;
+            
+            document.getElementById("hS").innerHTML = score;
+            document.getElementById("lS").innerHTML= "First Game Score!";
+            
+        } 
+            
+            
+            
+        firstScore = localStorage.getItem("highScore"); //one of most important code
+            
+
+        if ( score > firstScore) {
+            
+            localStorage.setItem("highScore", score);
+
+            //console.log(score);
+            //console.log(highScore);
+            
+            document.getElementById("hS").innerHTML = score;
+            document.getElementById("lS").innerHTML= "Highest Score!";
+
+            
+        } else {
+            
+            //console.log(score);
+            //console.log(firstScore);
+            
+            document.getElementById("hS").innerHTML = score;
+            document.getElementById("lS").innerHTML= "Still Low Score";
+        
+        }
+        
+    }
+      
+    }
+    
+    
+   
+    
+
+</script>
+</body>
+</html>
